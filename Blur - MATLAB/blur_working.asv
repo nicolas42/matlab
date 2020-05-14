@@ -1,0 +1,23 @@
+clear all; close all; clc;
+
+%% Load image
+image_in = imread('Lenna.png');
+
+%% Pass image through RGB to Luminance, Red-Difference and Blue-Difference
+% Chrominances
+
+[image_y, image_Cb, image_Cr] = RGB_2_YCbCr(image_in);
+
+% Resultant luminance image
+[image_yRGB] = YCbCr_2_RGB(image_y, 128, 128);
+figure()
+%imshow(uint8(image_y));
+title('Test image represented with luminance')
+
+%% blur filter
+% assumes square filter with odd size
+
+do
+
+imshow([image_y, newimg]); % Assumes same number of rows in each.
+

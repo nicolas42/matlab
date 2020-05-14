@@ -1,0 +1,154 @@
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and export to LaTeX again.
+
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{epstopdf}
+\usepackage[table]{xcolor}
+\usepackage{matlab}
+
+\sloppy
+\epstopdfsetup{outdir=./}
+\graphicspath{ {./Untitled_images/} }
+
+\begin{document}
+
+\matlabtitle{Coffee Model April 2019}
+
+\begin{par}
+\begin{flushleft}
+How long will it take for my ideal coffee to cool down.  Use law of cooling T' = k(T(t)-Tinf) ; T Temperature and Tinf ambient temperature
+\end{flushleft}
+\end{par}
+
+\begin{matlabcode}
+clear;clc; syms t k T(t) Tinf b T0 Tsol(t);
+% The Basic System
+diff(T)+k*T == k*Tinf
+\end{matlabcode}
+\begin{matlabsymbolicoutput}
+ans(t) = 
+    $\displaystyle \frac{\partial }{\partial t}\;T\left(t\right)+k\,T\left(t\right)=\textrm{Tinf}\,k$
+\end{matlabsymbolicoutput}
+\begin{matlabcode}
+dsolve( diff(T)+k*T == k*Tinf, T(0)==T0)
+\end{matlabcode}
+\begin{matlabsymbolicoutput}
+ans = 
+    $\displaystyle \textrm{Tinf}+e^{-k\,t} \,{\left(T_0 -\textrm{Tinf}\right)}$
+\end{matlabsymbolicoutput}
+\begin{matlabcode}
+% If coffee's initially 95 degrees and the ambient temperature's 25 degrees
+T0 = 90; Tinf = 30;
+Tsol(t) = dsolve( diff(T)+k*T == k*Tinf, T(0)==T0)
+\end{matlabcode}
+\begin{matlabsymbolicoutput}
+Tsol(t) = 
+    $\displaystyle 60\,e^{-k\,t} +30$
+\end{matlabsymbolicoutput}
+\begin{matlabcode}
+% Solve for k with another point T(1/6)=48
+Tsol(t) = dsolve( diff(T)+k*T == k*Tinf, T(0)==T0)
+\end{matlabcode}
+\begin{matlabsymbolicoutput}
+Tsol(t) = 
+    $\displaystyle 60\,e^{-k\,t} +30$
+\end{matlabsymbolicoutput}
+\begin{matlabcode}
+% If the ambient temperature oscillates
+T0 = 95; Tinf = 7*sin(pi*t/12)+25;
+Tsol(t) = dsolve( diff(T)+k*T == k*Tinf, T(0)==T0)
+\end{matlabcode}
+\begin{matlabsymbolicoutput}
+Tsol(t) = 
+    $\displaystyle \begin{array}{l}
+\frac{25\,\pi^2 +1008\,k^2 \,\sin \left(\frac{\pi \,t}{12}\right)+3600\,k^2 -84\,\pi \,k\,\cos \left(\frac{\pi \,t}{12}\right)}{\sigma_1 }+\frac{e^{-k\,t} \,{\left(10080\,k^2 +84\,\pi \,k+70\,\pi^2 \right)}}{\sigma_1 }\\
+\mathrm{}\\
+\textrm{where}\\
+\mathrm{}\\
+\;\;\sigma_1 =144\,k^2 +\pi^2 
+\end{array}$
+\end{matlabsymbolicoutput}
+\begin{matlabcode}
+%% Plot flow
+[t, T] = meshgrid(linspace(0,100,11),linspace(0,100,11));
+k = 0.1; %-6*log(3/10);
+T0 = 90; Tinf = 30;
+figure();
+quiver(t, T, ones(length(t)), -k*(T-Tinf))
+\end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{58.50476668339187em}]{figure_0}
+\end{center}
+\begin{matlabcode}
+\end{matlabcode}
+
+
+\matlabheading{Plot Solution with forcing function}
+
+\begin{matlabcode}
+clear;clc; syms t k T0 T(t) Tinf(t) ;
+digits(4)
+% k has been changed for a nicer plot
+T0 = 90; Tinf(t) = 7*sin(pi*t/12)+25; k = 0.1; % should be vpa(-6*log(3/10)); 
+Tsol(t) = dsolve( diff(T)+k*T == k*Tinf, T(0)==T0)
+\end{matlabcode}
+\begin{matlabsymbolicoutput}
+Tsol(t) = 
+    $\displaystyle e^{-\frac{t}{10}} \,{\left(\frac{210\,\pi }{25\,\pi^2 +36}+65\right)}+e^{-\frac{t}{10}} \,{\left(25\,e^{t/10} +\frac{42\,e^{t/10} \,{\left(6\,\sin \left(\frac{\pi \,t}{12}\right)-5\,\pi \,\cos \left(\frac{\pi \,t}{12}\right)\right)}}{25\,\pi^2 +36}\right)}$
+\end{matlabsymbolicoutput}
+\begin{matlabcode}
+T = linspace(0,100,1001); Temps = []; Ambs = [];
+for t = T
+    Ambs = [Ambs; Tinf(t)];
+    Temps = [Temps; Tsol(t)];
+end
+plot(T, Ambs, T, Temps);
+title("Temperature of Coffee with Oscillating Ambient Temperature");
+xlabel("Seconds"); ylabel("Degrees C");
+\end{matlabcode}
+\begin{center}
+\includegraphics[width=\maxwidth{58.50476668339187em}]{figure_1}
+\end{center}
+\begin{matlabcode}
+\end{matlabcode}
+
+
+\matlabheading{References}
+
+\begin{matlabcode}
+% MATLAB Online R2019a
+% https://matlab.mathworks.com/
+% 
+% (18) Symbolic Mathematics in Matlab - YouTube
+% https://www.youtube.com/watch?v=Anrm7B6yD18
+% 
+% notes - Online LaTeX Editor Overleaf
+% https://www.overleaf.com/project/5cb3f98ee51a152e6d1dd2bb
+% 
+% How do I get pretty symbolic expressions in MATLAB using fancy? - MATLAB Answers - MATLAB Central
+% https://au.mathworks.com/matlabcentral/answers/650-how-do-i-get-pretty-symbolic-expressions-in-matlab-using-fancy
+% 
+% How to display answers in original form, rather than automatically in pretty() form ? - MATLAB Answers - MATLAB Central
+% https://au.mathworks.com/matlabcentral/answers/262113-how-to-display-answers-in-original-form-rather-than-automatically-in-pretty-form
+% 
+% Pretty Equation Viewer - File Exchange - MATLAB Central
+% https://au.mathworks.com/matlabcentral/fileexchange/55477-pretty-equation-viewer
+% 
+% Polynomial Regression filter implementation - MATLAB Answers - MATLAB Central
+% https://au.mathworks.com/matlabcentral/answers/285570-polynomial-regression-filter-implementation
+% 
+% 8 Handy MATLAB Shortcuts That Will Save You a Ton of Time
+% https://interestingengineering.com/8-handy-matlab-shortcuts-that-will-save-you-a-ton-of-time
+\end{matlabcode}
+
+\end{document}
