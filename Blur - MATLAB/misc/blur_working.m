@@ -20,9 +20,9 @@ I1 = image_y;
 % assumes square filter with odd size
 
 kernel = uint8(ones(3));
-I2 = filter(image_y, kernel);
-I3 = filter(image_y, ones(9));
-I4 = filter(image_y, [1 2 1; 1 2 1; 1 2 1]);
+I2 = filter1(image_y, kernel);
+I3 = filter1(image_y, ones(9));
+I4 = filter1(image_y, [1 2 1; 1 2 1; 1 2 1]);
 
 %imshow([image_y, newimg]); % Assumes same number of rows in each.
 

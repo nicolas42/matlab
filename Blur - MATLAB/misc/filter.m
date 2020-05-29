@@ -1,4 +1,4 @@
-function [newimg] = filter(image_y, kernel)
+function [newimg] = filter1(image_y, kernel)
 
 img = image_y
 %img=rand(5);
